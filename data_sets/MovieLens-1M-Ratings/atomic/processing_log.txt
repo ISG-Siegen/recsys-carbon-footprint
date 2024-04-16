@@ -1,0 +1,26 @@
+Converting processed data to atomic data.
+No data set already loaded.
+Loading processed data set.
+Loaded processed data set.
+Function process_data executed in 218 milliseconds.
+Pruning data set to 5-core.
+Number of interactions before: 1000209
+Number of interactions after: 999611
+Function core_pruning executed in 27045 milliseconds.
+Normalizing identifiers.
+Function normalize_identifiers executed in 55 milliseconds.
+Data set already loaded.
+Writing atomic data set to file.
+Written atomic data set to file.
+Function write_data executed in 1062 milliseconds.
+Function split_data executed in 365 milliseconds.
+Data splits do not exist.
+Writing data splits to file.
+Function write_data_splits executed in 5286 milliseconds.
+Data set already loaded.
+Calculating metadata.
+Calculated metadata.
+Function calculate_metadata executed in 648 milliseconds.
+Writing atomic metadata to file.
+Written atomic metadata to file.
+Function write_metadata executed in 0 milliseconds.

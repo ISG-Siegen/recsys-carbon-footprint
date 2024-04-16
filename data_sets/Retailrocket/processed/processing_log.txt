@@ -1,0 +1,27 @@
+Converting raw data to processed data.
+No data set already loaded.
+Loading raw data set.
+Loaded raw data set.
+Dropping duplicate interactions.
+Number of interactions before: 2664312
+Number of interactions after: 2132127
+Normalizing identifiers.
+Checking and ordering columns.
+Data columns: ['user', 'item']
+Data contains user and item columns.
+Checking and converting data types.
+Converting data type of column user from int64 to str.
+Converting data type of column item from int64 to str.
+Processed raw data.
+Function process_data executed in 7141 milliseconds.
+Data set already loaded.
+Writing processed data set to file.
+Written processed data set to file.
+Function write_data executed in 1226 milliseconds.
+Data set already loaded.
+Calculating metadata.
+Calculated metadata.
+Function calculate_metadata executed in 4401 milliseconds.
+Writing processed metadata to file.
+Written processed metadata to file.
+Function write_metadata executed in 0 milliseconds.

@@ -1,0 +1,13 @@
+{
+    "data_set_names": [
+        "MovieLens-1M-Ratings",
+        "MovieLens-100K-Ratings",
+        "Netflix"
+    ],
+    "algorithm_names": [
+        "BiasedMF",
+        "FunkSVD",
+        "ItemItem",
+        "UserUser"
+    ]
+}

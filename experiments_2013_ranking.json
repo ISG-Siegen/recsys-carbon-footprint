@@ -1,0 +1,20 @@
+{
+    "data_set_names": [
+        "MovieLens-1M",
+        "MovieLens-100K",
+        "Gowalla",
+        "Hetrec-LastFM"
+    ],
+    "algorithm_names": [
+        "BPR",
+        "ImplicitMF",
+        "ItemItem",
+        "ItemKNN",
+        "ItemKNNRP",
+        "NMF",
+        "Pop",
+        "PopScore",
+        "SVD",
+        "UserUser"
+    ]
+}

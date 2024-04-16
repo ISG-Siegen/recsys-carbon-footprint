@@ -1,0 +1,40 @@
+{
+    "data_set_names": [
+        "MovieLens-100K",
+        "MovieLens-1M",
+        "MovieLens-Latest-Small",
+        "Hetrec-LastFM",
+        "Gowalla",
+        "Amazon2018-Toys-And-Games",
+        "Amazon2018-Electronics",
+        "Amazon2018-Sports-And-Outdoors",
+        "Amazon2018-Clothing-Shoes-And-Jewelry",
+        "Amazon2018-CDs-And-Vinyl",
+        "Amazon2018-Books",
+        "Yelp-2018",
+        "Retailrocket"
+    ],
+    "algorithm_names": [
+        "PopScore",
+        "ItemItem",
+        "UserUser",
+        "ImplicitMF",
+        "SVD",
+        "NMF",
+        "ItemKNNRP",
+        "Pop",
+        "ItemKNN",
+        "BPR",
+        "NeuMF",
+        "DMF",
+        "NGCF",
+        "LightGCN",
+        "NCL",
+        "SGL",
+        "DGCF",
+        "MultiVAE",
+        "MacridVAE",
+        "RecVAE",
+        "NAIS"
+    ]
+}
