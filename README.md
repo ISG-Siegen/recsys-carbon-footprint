@@ -1,7 +1,6 @@
 # RecSys Carbon Footprint
 
-This repository contains the code used to produce the results in our paper "The Carbon Footprint of Recommender Systems
-Experiments".
+This repository contains the code used to produce the results in our paper "From Clicks to Carbon: The Environmental Toll of Recommender Systems".
 
 ## Usage
 
