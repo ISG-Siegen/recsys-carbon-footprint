@@ -6,7 +6,7 @@ import os
 log_file_directory = 'experiment_logs/energy_logs'
 experiment_log_file_directory = 'experiment_logs/energy'
 
-with open("experiments_2023.json", "r") as file:
+with open("experiments_2023_workstation.json", "r") as file:
     experiment = json.load(file)
 
 num_folds = 5
