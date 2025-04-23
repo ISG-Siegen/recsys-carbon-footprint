@@ -128,6 +128,87 @@ def retrieve_configurations(algorithm_name):
         configuration_space["features"] = [100]
         configuration_space["iterations"] = [100]
         configuration_space["reg"] = [0.015]
+    elif algorithm_name == "ItemKNNEL":
+        configuration_space["neighbors"] = [100]
+        configuration_space["similarity"] = ["cosine"]
+        configuration_space["implicit"] = [True]
+    elif algorithm_name == "UserKNNEL":
+        configuration_space["neighbors"] = [100]
+        configuration_space["similarity"] = ["cosine"]
+        configuration_space["implicit"] = [True]
+    elif algorithm_name == "AMF":
+        configuration_space["epochs"] = [200]
+        configuration_space["lr"] = [0.01]
+    elif algorithm_name == "SlopeOne":
+        configuration_space["epochs"] = [1]
+    elif algorithm_name == "MultiDAEEL":
+        configuration_space["epochs"] = [200]
+        configuration_space["lr"] = [0.01]
+    elif algorithm_name == "MultiVAEEL":
+        configuration_space["epochs"] = [200]
+        configuration_space["lr"] = [0.01]
+    elif algorithm_name == "LightGCNEL":
+        configuration_space["epochs"] = [200]
+        configuration_space["lr"] = [0.01]
+    elif algorithm_name == "NGCFEL":
+        configuration_space["epochs"] = [200]
+        configuration_space["lr"] = [0.01]
+    elif algorithm_name == "MostPop":
+        configuration_space["epochs"] = [1]
+    elif algorithm_name == "BPRMF":
+        configuration_space["epochs"] = [200]
+        configuration_space["lr"] = [0.01]
+        configuration_space["factors"] = [100]
+    elif algorithm_name == "BPRMF_batch":
+        configuration_space["epochs"] = [200]
+        configuration_space["lr"] = [0.01]
+        configuration_space["factors"] = [100]
+    elif algorithm_name == "FM":
+        configuration_space["epochs"] = [200]
+        configuration_space["lr"] = [0.01]
+        configuration_space["factors"] = [100]
+    elif algorithm_name == "FunkSVDEL":
+        configuration_space["epochs"] = [200]
+        configuration_space["lr"] = [0.01]
+        configuration_space["factors"] = [100]
+    elif algorithm_name == "NonNegMF":
+        configuration_space["epochs"] = [200]
+        configuration_space["lr"] = [0.01]
+        configuration_space["factors"] = [100]
+    elif algorithm_name == "PureSVD":
+        configuration_space["factors"] = [100]
+    elif algorithm_name == "SVDpp":
+        configuration_space["epochs"] = [200]
+        configuration_space["lr"] = [0.01]
+        configuration_space["factors"] = [100]
+    elif algorithm_name == "WRMF":
+        configuration_space["epochs"] = [200]
+        configuration_space["factors"] = [100]
+    elif algorithm_name == "ConvMF":
+        configuration_space["epochs"] = [200]
+        configuration_space["lr"] = [0.01]
+        configuration_space["embedding_size"] = [64]
+    elif algorithm_name == "DeepFM":
+        configuration_space["epochs"] = [200]
+        configuration_space["lr"] = [0.01]
+        configuration_space["factors"] = [100]
+    elif algorithm_name == "DMFEL":
+        configuration_space["epochs"] = [200]
+        configuration_space["lr"] = [0.01]
+    elif algorithm_name == "GMF":
+        configuration_space["epochs"] = [200]
+        configuration_space["lr"] = [0.01]
+    elif algorithm_name == "ItemAutoRec":
+        configuration_space["epochs"] = [200]
+        configuration_space["lr"] = [0.01]
+    elif algorithm_name == "NeuMFEL":
+        configuration_space["epochs"] = [200]
+        configuration_space["lr"] = [0.01]
+    elif algorithm_name == "UserAutoRec":
+        configuration_space["epochs"] = [200]
+        configuration_space["lr"] = [0.01]
+    else:
+        pass
 
     experiments = [dict(zip(configuration_space.keys(), v)) for v in itertools.product(*configuration_space.values())]
     return experiments

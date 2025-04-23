@@ -6,10 +6,7 @@ import numpy as np
 from sklearn.model_selection import KFold, train_test_split
 from pathlib import Path
 
-data_sets = ['Amazon2018-Books', 'Amazon2018-CDs-And-Vinyl', 'Amazon2018-Clothing-Shoes-And-Jewelry',
-             'Amazon2018-Electronics', 'Amazon2018-Sports-And-Outdoors', 'Amazon2018-Toys-And-Games', 'Gowalla',
-             'Hetrec-LastFM', 'MovieLens-100K', 'MovieLens-100K-Ratings', 'MovieLens-1M', 'MovieLens-1M-Ratings',
-             'MovieLens-Latest-Small', 'Netflix', 'Retailrocket', 'Yelp-2018']
+data_sets = ['MovieLens-1M']
 
 for data_set_name in data_sets:
     print(f"Processing {data_set_name}...")
@@ -186,9 +183,19 @@ for data_set_name in data_sets:
         data_splits[f"fold_{fold}"] = {"train": train, "valid": valid, "test": test}
 
     # save data splits
-    data_splits[0]["train"].to_csv(f"{atomic_folder_path}/{data_set_name}.train_split_{0}.inter", index=False)
-    data_splits[0]["valid"].to_csv(f"{atomic_folder_path}/{data_set_name}.valid_split_{0}.inter", index=False)
-    data_splits[0]["test"].to_csv(f"{atomic_folder_path}/{data_set_name}.test_split_{0}.inter", index=False)
+    data_splits["fold_0"]["train"].to_csv(f"{atomic_folder_path}/{data_set_name}.train_split_fold_{0}.inter",
+                                          index=False)
+    data_splits["fold_0"]["train"].to_csv(f"{atomic_folder_path}/{data_set_name}.train_split_fold_{0}.tsv", sep='\t',
+                                          header=False, index=False)
+
+    data_splits["fold_0"]["valid"].to_csv(f"{atomic_folder_path}/{data_set_name}.valid_split_fold_{0}.inter",
+                                          index=False)
+    data_splits["fold_0"]["valid"].to_csv(f"{atomic_folder_path}/{data_set_name}.valid_split_fold_{0}.tsv", sep='\t',
+                                          header=False, index=False)
+
+    data_splits["fold_0"]["test"].to_csv(f"{atomic_folder_path}/{data_set_name}.test_split_fold_{0}.inter", index=False)
+    data_splits["fold_0"]["test"].to_csv(f"{atomic_folder_path}/{data_set_name}.test_split_fold_{0}.tsv", sep='\t',
+                                         header=False, index=False)
 
     # calculate metadata
     meta_data = {

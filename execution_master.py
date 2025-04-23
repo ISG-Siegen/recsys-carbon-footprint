@@ -1,6 +1,7 @@
 import argparse
 
-from available_algorithms import recbole_algorithm_names, lenskit_algorithm_names, recpack_algorithm_names
+from available_algorithms import recbole_algorithm_names, lenskit_algorithm_names, recpack_algorithm_names, \
+    elliot_algorithm_names
 
 from run_utils import measure_and_log_function_time
 
@@ -56,6 +57,21 @@ if __name__ == "__main__":
             from run_recpack import recpack_evaluate
 
             measure_and_log_function_time(recpack_evaluate, **vars(args))
+        else:
+            print(f"Mode {args.mode} not found.")
+    elif args.algorithm_name in elliot_algorithm_names:
+        if args.mode == "fit":
+            from run_elliot import elliot_fit
+
+            measure_and_log_function_time(elliot_fit, **vars(args))
+        elif args.mode == "predict":
+            from run_elliot import elliot_predict
+
+            measure_and_log_function_time(elliot_predict, **vars(args))
+        elif args.mode == "evaluate":
+            from run_elliot import elliot_evaluate
+
+            measure_and_log_function_time(elliot_evaluate, **vars(args))
         else:
             print(f"Mode {args.mode} not found.")
     else:

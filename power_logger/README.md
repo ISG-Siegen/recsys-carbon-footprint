@@ -5,6 +5,6 @@ the data to a file and optionally displays it in a plot.
 
 ## Usage
 
-Enter your Shelly Plus Plug S credentials in `statc.py`.  
+Enter your Shelly Plus Plug S credentials in `static.py`.  
 Run `main.py` to start logging. Set the flags to change between local and remote logging, and to enable/disable the
 display.
