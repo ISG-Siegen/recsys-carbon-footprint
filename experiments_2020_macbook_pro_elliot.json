@@ -1,0 +1,24 @@
+{
+  "data_set_names": [
+    "Hetrec-LastFM",
+    "MovieLens-100K",
+    "MovieLens-1M",
+    "MovieLens-Latest-Small"
+  ],
+  "algorithm_names": [
+    "ItemKNNEL",
+    "UserKNNEL",
+    "AMF",
+    "MultiDAEEL",
+    "LightGCNEL",
+    "MostPop",
+    "BPRMF",
+    "BPRMF_batch",
+    "FunkSVDEL",
+    "PureSVD",
+    "GMF",
+    "ItemAutoRec",
+    "NeuMFEL",
+    "UserAutoRec"
+  ]
+}

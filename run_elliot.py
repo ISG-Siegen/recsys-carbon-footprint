@@ -4,13 +4,12 @@ from os import path
 
 import numpy as np
 import pandas as pd
-import tensorflow as tf
 
 from algorithm_config import retrieve_configurations
 import time
 import yaml
 
-from run_utils import ndcg, hr, recall, rmse, mae
+from run_utils import ndcg, hr, recall
 
 import importlib
 
@@ -20,6 +19,13 @@ from elliot.utils import logging as logging_project
 from elliot.dataset.dataset import DataSetLoader
 
 here = path.abspath(path.dirname(__file__))
+
+
+def elliot_write_energy(time_before, time_after, **kwargs):
+    Path(f"./energy").mkdir(parents=True, exist_ok=True)
+    with open(f"./energy/{kwargs['data_set_name']}_{kwargs['algorithm_name']}_"
+              f"{kwargs['algorithm_config']}_{kwargs['fold']}_{kwargs['mode']}.json", "w") as file:
+        json.dump({"start": time_before, "end": time_after}, file, indent=4)
 
 
 def elliot_config(data_set_name, algorithm_name, current_configuration):
@@ -76,7 +82,8 @@ def elliot_config(data_set_name, algorithm_name, current_configuration):
     return config_path
 
 
-def elliot_fit(data_set_name, algorithm_name, algorithm_config, fold, **kwargs):
+def elliot_run(data_set_name, algorithm_name, algorithm_config, fold, **kwargs):
+    process_fit_start_time = time.time()
     setup_start_time = time.time()
 
     configurations = retrieve_configurations(algorithm_name=algorithm_name)
@@ -118,6 +125,7 @@ def elliot_fit(data_set_name, algorithm_name, algorithm_config, fold, **kwargs):
     current_time = time.time()
     model_file = f"{target_path}{algorithm_name}-{current_time}"
 
+    '''
     if hasattr(model, "_model"):
         if isinstance(model._model, tf.keras.Model):
             checkpoint = tf.train.Checkpoint(model=model._model)
@@ -130,6 +138,7 @@ def elliot_fit(data_set_name, algorithm_name, algorithm_config, fold, **kwargs):
         model_file = f"{model_file}.dat"
         with open(f"{model_file}.dat", "wb") as file:
             pass
+    '''
 
     fit_log_dict = {
         "model_file": model_file,
@@ -146,48 +155,21 @@ def elliot_fit(data_set_name, algorithm_name, algorithm_config, fold, **kwargs):
               f"config_{algorithm_config}/fold_{fold}/fit_log.json", mode="w") as file:
         json.dump(fit_log_dict, file, indent=4)
 
+    process_fit_end_time = time.time()
+    elliot_write_energy(process_fit_start_time, process_fit_end_time, data_set_name=data_set_name,
+                        algorithm_name=algorithm_name, algorithm_config=algorithm_config, fold=fold,
+                        mode="fit")
 
-def elliot_predict(data_set_name, algorithm_name, algorithm_config, fold, **kwargs):
-    configurations = retrieve_configurations(algorithm_name=algorithm_name)
-    current_configuration = configurations[algorithm_config]
+    process_predict_start_time = time.time()
 
-    config_path = elliot_config(data_set_name, algorithm_name, current_configuration)
-
-    builder = NameSpaceBuilder(config_path, here, path.abspath(path.dirname(config_path)))
-    base = builder.base
-    logging_project.init("./logger_config.yml", base.base_namespace.path_log_folder)
-    logger = logging_project.get_logger("__main__")
-
-    logger.info("Start experiment")
-    base.base_namespace.evaluation.relevance_threshold = getattr(base.base_namespace.evaluation, "relevance_threshold",
-                                                                 0)
-    dataloader = DataSetLoader(config=base.base_namespace)
-
-    data_test_list = dataloader.generate_dataobjects()
-    key, model_base = list(builder.models())[0]
-    data_test = data_test_list[0]
-
-    logging_project.prepare_logger(key, base.base_namespace.path_log_folder)
-
-    model_class = getattr(importlib.import_module("elliot.recommender"), key)
-    model_placeholder = ho.ModelCoordinator(data_test, base.base_namespace, model_base, model_class, 0)
-
-    logger.info(f"Training begun for {model_class.__name__}\\n")
-    model = model_placeholder.model_class(data=model_placeholder.data_objs[0], config=model_placeholder.base,
-                                          params=model_placeholder.params)
-
-    fit_log_file = (f"./data_sets/{data_set_name}/checkpoint_{algorithm_name}/"
-                    f"config_{algorithm_config}/fold_{fold}/fit_log.json")
-    with open(fit_log_file, "r") as file:
-        fit_log = json.load(file)
-    model_file = fit_log["model_file"]
-
+    '''
     if hasattr(model, "_model"):
         if isinstance(model._model, tf.keras.Model):
             checkpoint = tf.train.Checkpoint(model=model._model)
             checkpoint.restore(model_file).expect_partial()
         else:
             model._model.load_weights(model_file)
+    '''
 
     start_prediction = time.time()
     recs = model.get_recommendations(model.evaluator.get_needed_recommendations())
@@ -198,6 +180,14 @@ def elliot_predict(data_set_name, algorithm_name, algorithm_config, fold, **kwar
     with open(f"./data_sets/{data_set_name}/checkpoint_{algorithm_name}/"
               f"config_{algorithm_config}/fold_{fold}/predictions.json", "w") as file:
         json.dump(recs, file, indent=4)
+
+    process_predict_end_time = time.time()
+
+    elliot_write_energy(process_predict_start_time, process_predict_end_time, data_set_name=data_set_name,
+                        algorithm_name=algorithm_name, algorithm_config=algorithm_config, fold=fold,
+                        mode="predict")
+
+    process_evaluate_start_time = time.time()
 
     train = pd.read_csv(
         f"./data_sets/{data_set_name}/atomic/{data_set_name}.train_split_fold_{fold}.inter",
@@ -227,24 +217,6 @@ def elliot_predict(data_set_name, algorithm_name, algorithm_config, fold, **kwar
               f"config_{algorithm_config}/fold_{fold}/predict_log.json", "w") as file:
         json.dump(predict_log_dict, file, indent=4)
 
-
-def elliot_evaluate(data_set_name, algorithm_name, algorithm_config, fold, **kwargs):
-    configurations = retrieve_configurations(algorithm_name=algorithm_name)
-
-    config_path = Path(f'./elliot_{data_set_name}_{algorithm_name}.yaml')
-    if config_path.exists():
-        config_path.unlink()
-
-    predict_log_file = (f"./data_sets/{data_set_name}/checkpoint_{algorithm_name}/"
-                        f"config_{algorithm_config}/fold_{fold}/predict_log.json")
-    with open(predict_log_file, "r") as file:
-        predict_log = json.load(file)
-    model_file = predict_log["model_file"]
-
-    test = pd.read_csv(
-        f"./data_sets/{data_set_name}/atomic/{data_set_name}.test_split_fold_{fold}.inter",
-        header=0, sep=",")
-
     evaluate_log_dict = {
         "model_file": model_file,
         "data_set_name": data_set_name,
@@ -254,48 +226,38 @@ def elliot_evaluate(data_set_name, algorithm_name, algorithm_config, fold, **kwa
         "fold": fold
     }
 
-    if "rating" not in test.columns:
+    with open(f"./data_sets/{data_set_name}/checkpoint_{algorithm_name}/"
+              f"config_{algorithm_config}/fold_{fold}/predictions.json", "r") as file:
+        top_k_dict = json.load(file)
 
-        with open(f"./data_sets/{data_set_name}/checkpoint_{algorithm_name}/"
-                  f"config_{algorithm_config}/fold_{fold}/predictions.json", "r") as file:
-            top_k_dict = json.load(file)
+    top_k_dict = {int(k): v[0] for k, v in top_k_dict.items()}
+    k_options = [1, 3, 5, 10, 20]
 
-        top_k_dict = {int(k): v[0] for k, v in top_k_dict.items()}
-        k_options = [1, 3, 5, 10, 20]
+    start_evaluation = time.time()
+    ndcg_per_user_per_k = ndcg(top_k_dict, k_options, test, "user_id:token", "item_id:token")
+    hr_per_user_per_k = hr(top_k_dict, k_options, test, "user_id:token", "item_id:token")
+    recall_per_user_per_k = recall(top_k_dict, k_options, test, "user_id:token", "item_id:token")
+    end_evaluation = time.time()
 
-        start_evaluation = time.time()
-        ndcg_per_user_per_k = ndcg(top_k_dict, k_options, test, "user_id:token", "item_id:token")
-        hr_per_user_per_k = hr(top_k_dict, k_options, test, "user_id:token", "item_id:token")
-        recall_per_user_per_k = recall(top_k_dict, k_options, test, "user_id:token", "item_id:token")
-        end_evaluation = time.time()
+    evaluate_log_dict["evaluation_time"] = end_evaluation - start_evaluation
 
-        evaluate_log_dict["evaluation_time"] = end_evaluation - start_evaluation
-
-        for k in k_options:
-            score = sum(ndcg_per_user_per_k[k]) / len(ndcg_per_user_per_k[k])
-            print(f"NDCG@{k}: {score}")
-            evaluate_log_dict[f"NDCG@{k}"] = score
-            score = sum(hr_per_user_per_k[k]) / len(hr_per_user_per_k[k])
-            print(f"HR@{k}: {score}")
-            evaluate_log_dict[f"HR@{k}"] = score
-            score = sum(recall_per_user_per_k[k]) / len(recall_per_user_per_k[k])
-            print(f"Recall@{k}: {score}")
-            evaluate_log_dict[f"Recall@{k}"] = score
-    else:
-        predictions = pd.read_csv(f"./data_sets/{data_set_name}/checkpoint_{algorithm_name}/"
-                                  f"config_{algorithm_config}/fold_{fold}/predictions.csv")
-
-        start_evaluation = time.time()
-        rmse_score = rmse(predictions["prediction"], test["rating"])
-        mae_score = mae(predictions["prediction"], test["rating"])
-        end_evaluation = time.time()
-
-        evaluate_log_dict["evaluation_time"] = end_evaluation - start_evaluation
-        print(f"RMSE: {rmse_score}")
-        evaluate_log_dict["RMSE"] = rmse_score
-        print(f"MAE: {mae_score}")
-        evaluate_log_dict["MAE"] = mae_score
+    for k in k_options:
+        score = sum(ndcg_per_user_per_k[k]) / len(ndcg_per_user_per_k[k])
+        print(f"NDCG@{k}: {score}")
+        evaluate_log_dict[f"NDCG@{k}"] = score
+        score = sum(hr_per_user_per_k[k]) / len(hr_per_user_per_k[k])
+        print(f"HR@{k}: {score}")
+        evaluate_log_dict[f"HR@{k}"] = score
+        score = sum(recall_per_user_per_k[k]) / len(recall_per_user_per_k[k])
+        print(f"Recall@{k}: {score}")
+        evaluate_log_dict[f"Recall@{k}"] = score
 
     with open(f"./data_sets/{data_set_name}/checkpoint_{algorithm_name}/"
               f"config_{algorithm_config}/fold_{fold}/evaluate_log.json", 'w') as file:
         json.dump(evaluate_log_dict, file, indent=4)
+
+    process_evaluate_end_time = time.time()
+
+    elliot_write_energy(process_evaluate_start_time, process_evaluate_end_time, data_set_name=data_set_name,
+                        algorithm_name=algorithm_name, algorithm_config=algorithm_config, fold=fold,
+                        mode="evaluate")

@@ -15,29 +15,10 @@
     "Retailrocket"
   ],
   "algorithm_names": [
-    "ItemKNNEL",
-    "UserKNNEL",
     "AMF",
-    "SlopeOne",
     "MultiDAEEL",
     "MultiVAEEL",
-    "LightGCNEL",
-    "NGCFEL",
     "MostPop",
-    "BPRMF",
-    "BPRMF_batch",
-    "FM",
-    "FunkSVDEL",
-    "NonNegMF",
-    "PureSVD",
-    "SVDpp",
-    "WRMF",
-    "ConvMF",
-    "DeepFM",
-    "DMFEL",
-    "GMF",
-    "ItemAutoRec",
-    "NeuMFEL",
-    "UserAutoRec"
+    "BPRMF_batch"
   ]
 }

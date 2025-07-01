@@ -61,17 +61,11 @@ if __name__ == "__main__":
             print(f"Mode {args.mode} not found.")
     elif args.algorithm_name in elliot_algorithm_names:
         if args.mode == "fit":
-            from run_elliot import elliot_fit
+            from run_elliot import elliot_run
 
-            measure_and_log_function_time(elliot_fit, **vars(args))
-        elif args.mode == "predict":
-            from run_elliot import elliot_predict
-
-            measure_and_log_function_time(elliot_predict, **vars(args))
-        elif args.mode == "evaluate":
-            from run_elliot import elliot_evaluate
-
-            measure_and_log_function_time(elliot_evaluate, **vars(args))
+            elliot_run(**vars(args))
+        elif args.mode == "predict" or args.mode == "evaluate":
+            print("Skipping predict/evaluate for Elliot as it is implemented in the fit function.")
         else:
             print(f"Mode {args.mode} not found.")
     else:
